@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "347848295470",
+    "project_id": "servify-d0ef1",
+    "storage_bucket": "servify-d0ef1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:347848295470:android:d26a8c3546d805453f0bbf",
+        "android_client_info": {
+          "package_name": "com.example.servify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "347848295470-n235suv6p2b842tmah11aq8ljeu6v080.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDImTj2CGE7Z2q2RWJ9W21GYQ0eZnEo6DM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "347848295470-n235suv6p2b842tmah11aq8ljeu6v080.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
