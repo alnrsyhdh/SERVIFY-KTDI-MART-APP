@@ -36,7 +36,7 @@ public class AdminLogin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_login);
 
-        tv_login_movesignup=findViewById(R.id.tv_login_movesignup);
+//        tv_login_movesignup=findViewById(R.id.tv_login_movesignup);
         bt_login_login=findViewById(R.id.bt_login_login);
         et_login_email=findViewById(R.id.et_login_email);
         et_login_password=findViewById(R.id.et_login_password);
@@ -44,12 +44,12 @@ public class AdminLogin extends AppCompatActivity {
         nAuth=FirebaseAuth.getInstance();
         nUser=nAuth.getCurrentUser();
 
-        tv_login_movesignup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(AdminLogin.this, AdminRegister.class));
-            }
-        });
+//        tv_login_movesignup.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(AdminLogin.this, AdminRegister.class));
+//            }
+//        });
 
         bt_login_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +89,7 @@ public class AdminLogin extends AppCompatActivity {
                     {
                         progressDialog.dismiss();
                         sendUserToNextActivity();
-                        Toast.makeText(AdminLogin.this, "Login Succesfull", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AdminLogin.this, "Login Successfull", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
@@ -104,9 +104,7 @@ public class AdminLogin extends AppCompatActivity {
 }
 
     private void sendUserToNextActivity() {
-        Intent intent = new Intent(AdminLogin.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        startActivity(new Intent(AdminLogin.this, AdminMainActivity.class));
     }
 
     }
