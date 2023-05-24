@@ -68,11 +68,11 @@ public class MainActivity extends AppCompatActivity
                     .commit();
             return true;
         } else if (itemId == R.id.account) {
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .replace(R.id.flFragment, fifthFragment)
-//                    .commit();
-            startActivity(new Intent(MainActivity.this, AdminLogin.class));
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.flFragment, fifthFragment)
+                    .commit();
+//            startActivity(new Intent(MainActivity.this, AdminLogin.class));
             return true;
         }
         return false;
