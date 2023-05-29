@@ -27,6 +27,7 @@
         android:background="@drawable/round_bt"
         android:elevation="20dp"
         android:text="Login"
+        android:fontFamily="@font/poppins_semibold"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

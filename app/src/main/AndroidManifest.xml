@@ -23,6 +23,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".AdminRegister"
+            android:exported="true" />
+            <!-- If want to add new admin, run the .AdminRegister file-->
+        <activity
             android:name=".AdminLogin"
             android:exported="false" />
         <activity
