@@ -12,26 +12,38 @@
         android:id="@+id/tv_ktdimart"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:background="@drawable/round_bt"
+        android:background="@drawable/banner_rec"
         android:drawableStart="@drawable/lg_low"
-        android:text="KTDI MART"
         android:padding="16dp"
         android:paddingStart="20dp"
+        android:text="KTDI MART"
         android:textAlignment="center"
-        android:textSize="34sp"
-        android:textStyle="bold"
         android:textColor="#EFB700"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.413" />
+        android:textSize="34sp"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/statusTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textColor="@color/white"
+            android:text="LOADING STATUS.."
+            android:background="@drawable/round_rec"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"
         android:textStyle="bold"
         android:text="Sneak Peak!"
@@ -40,7 +52,7 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="5dp">
 
 
         <LinearLayout
@@ -208,7 +220,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:text="Wish Upon~"
         android:textStyle="bold"
@@ -217,7 +229,7 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="5dp">
 
 
         <LinearLayout

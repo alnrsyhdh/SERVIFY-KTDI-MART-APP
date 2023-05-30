@@ -1,6 +1,12 @@
 <resources>
+
     <string name="group_name">SERVIFY</string>
     <string name="app_name">KTDI MART</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="status_options">
+    <item>OPEN</item>
+    <item>CLOSE</item>
+    <item>ON BREAK</item>
+    </string-array>
+
 </resources>
