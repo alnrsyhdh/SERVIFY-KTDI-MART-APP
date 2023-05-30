@@ -6,14 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.example.servify.R;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -72,14 +71,29 @@ public class AdminSecondFragment extends Fragment{
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        int productId = 0;
-                        String productName = "";
-                        double productPrice = 0.00;
+                        //int productId;
+                        // Generate a unique identifier for the productId
+                        long timestamp = System.currentTimeMillis();
+                        int productId = (int) timestamp; // Convert the timestamp to an integer if necessary
 
-                        Product product = new Product(productId, productName, productPrice);
-                        productsRef.child(String.valueOf(productId)).setValue(product);
+                        EditText productName = dialogView.findViewById(R.id.productName);
+                        EditText productPrice = dialogView.findViewById(R.id.productPrice);
+
+                        //Button addBtn = dialogView.findViewById(R.id.addBtn);
+
+                        //Product product = new Product(productName, productPrice);
+                        //productsRef.child(String.valueOf(productId)).setValue(product);
+                        //productsRef.child("products").child(productId).setValue(new Product(productId, productName, productPrice));
+
+                        String name = productName.getText().toString();
+                        String price = productPrice.getText().toString();
+
+                        Product product = new Product(productId, name, Double.parseDouble(price));
+                        productsRef.child("products").child(String.valueOf(productId)).setValue(product);
+
+
                         // Display a toast message for successful input
-                        Toast.makeText(getActivity(), "Input added successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Input added successfully.", Toast.LENGTH_SHORT).show();
 
                     }
 

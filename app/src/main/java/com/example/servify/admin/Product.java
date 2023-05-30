@@ -1,5 +1,7 @@
 package com.example.servify.admin;
 
+import android.widget.EditText;
+
 public class Product {
 
         private int productId;
@@ -7,7 +9,7 @@ public class Product {
 
         public double productPrice;
 
-        public Product() {
+        public Product(int productId, EditText productName, EditText productPrice) {
             // Default constructor required for Firebase
         }
 
