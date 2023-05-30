@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/productNameTextView"
+        android:layout_width="148dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="126dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="137dp"
+        android:gravity="center"
+        android:text="PRODUCT NAME:"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/productPriceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="PRODUCT PRICE (RM):"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/productPrice"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productPriceTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:hint="RM 0.00"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/productName"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productNameTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:hint="Enter product name"
+        android:inputType="text" />
+
+
+</RelativeLayout>
+
+
+
+
+
