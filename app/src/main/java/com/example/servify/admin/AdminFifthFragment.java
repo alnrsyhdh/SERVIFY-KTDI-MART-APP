@@ -95,7 +95,15 @@ public class AdminFifthFragment extends Fragment {
                     String profilePic = dataSnapshot.child("profilePic").getValue(String.class);
                     String role = dataSnapshot.child("role").getValue(String.class);
 
-                    Picasso.get().load(profilePic).into(profile_pic);
+                    // Check if the profilePic value is null or empty
+                    if (TextUtils.isEmpty(profilePic)) {
+                        // Set the default picture in the ImageView
+                        profile_pic.setImageResource(R.drawable.profile_pic);
+                    } else {
+                        // Load the profile picture using Picasso
+                        Picasso.get().load(profilePic).into(profile_pic);
+                    }
+
                     admin_email.setText(email);
                     admin_password.setText(password);
                     admin_role.setText(role);
@@ -125,30 +133,35 @@ public class AdminFifthFragment extends Fragment {
                 String newRole = admin_role2.getText().toString();
 
                 if (!TextUtils.isEmpty(newPassword)) {
-                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                    if (currentUser != null) {
-                        currentUser.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    FirebaseDatabase.getInstance().getReference("servify/admin/" + mAuth.getCurrentUser().getUid() + "/password")
-                                            .setValue(newPassword)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
-                                                        reloadFragment();
-                                                    } else {
-                                                        Toast.makeText(getContext(), "Password update failed", Toast.LENGTH_SHORT).show();
+                    // Check if the new password is longer than 8 characters
+                    if (newPassword.length() > 8) {
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser != null) {
+                            currentUser.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        FirebaseDatabase.getInstance().getReference("servify/admin/" + mAuth.getCurrentUser().getUid() + "/password")
+                                                .setValue(newPassword)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
+                                                            reloadFragment();
+                                                        } else {
+                                                            Toast.makeText(getContext(), "Password update failed", Toast.LENGTH_SHORT).show();
+                                                        }
                                                     }
-                                                }
-                                            });
-                                } else {
-                                    Toast.makeText(getContext(), "Password update failed", Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else {
+                                        Toast.makeText(getContext(), "Password update failed", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Password must be at least 8 characters long", Toast.LENGTH_SHORT).show();
                     }
                 }
 
