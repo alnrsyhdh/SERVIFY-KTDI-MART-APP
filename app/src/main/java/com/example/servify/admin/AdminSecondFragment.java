@@ -20,7 +20,7 @@ public class AdminSecondFragment extends Fragment{
 
     Button addBtn;
 
-    DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference("servify/products");
+    DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference("servify/");
 
     public AdminSecondFragment() {
         // Required empty public constructor
