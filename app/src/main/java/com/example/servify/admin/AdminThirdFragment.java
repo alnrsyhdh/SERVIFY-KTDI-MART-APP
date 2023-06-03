@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
-import com.example.servify.customer.Wish;
-import com.example.servify.customer.WishAdapter;
+import com.example.servify.admin.AdminWish;
+import com.example.servify.admin.AdminWishAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,8 +32,8 @@ import java.util.List;
 public class AdminThirdFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private WishAdapter wishAdapter;
-    private List<Wish> wishList;
+    private AdminWishAdapter wishAdapter;
+    private List<AdminWish> wishList;
     private DatabaseReference wishRef;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -89,7 +89,7 @@ public class AdminThirdFragment extends Fragment {
         wishList = new ArrayList<>();
 
         // Set up the adapter with the wishList
-        wishAdapter = new WishAdapter(wishList);
+        wishAdapter = new AdminWishAdapter(wishList);
         recyclerView.setAdapter(wishAdapter);
 
         // Set up the layout manager for the RecyclerView
@@ -107,10 +107,10 @@ public class AdminThirdFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     int wishId = snapshot.child("id").getValue(Integer.class);
                     String wishPic = snapshot.child("imageUrl").getValue(String.class);
-                    String wishName = snapshot.child("uName").getValue(String.class);
-                    String wishDetails = snapshot.child("pName").getValue(String.class);
+                    String wishName = snapshot.child("pName").getValue(String.class);
+                    String wishDetails = snapshot.child("wish").getValue(String.class);
 
-                    Wish wish = new Wish(wishId, wishName, wishDetails, wishPic);
+                    AdminWish wish = new AdminWish(wishId, wishName, wishDetails, wishPic);
                     wishList.add(wish);
                 }
                 wishAdapter.notifyDataSetChanged();
