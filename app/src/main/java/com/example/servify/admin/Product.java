@@ -8,6 +8,7 @@ public class Product {
         public String productName;
 
         public double productPrice;
+        public String productPic;
 
         public Product(int productId, EditText productName, EditText productPrice) {
             // Default constructor required for Firebase
@@ -18,6 +19,13 @@ public class Product {
             this.productName = productName;
             this.productPrice = productPrice;
         }
+
+    public Product(int productId, String productName, double productPrice, String productPic) {
+        this.productId = productId;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.productPic = productPic;
+    }
 
         //getter and setter for ProductId
         public int getProductId() {
@@ -46,5 +54,13 @@ public class Product {
         public void setProductPrice(double productPrice) {
             this.productPrice = productPrice;
         }
+
+    public String getProductPic() {
+        return productPic;
+    }
+
+    public void setProductPic(String productPic) {
+        this.productPic = productPic;
+    }
 }
 

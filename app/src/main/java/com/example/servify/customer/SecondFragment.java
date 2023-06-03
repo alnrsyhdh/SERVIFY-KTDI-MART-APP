@@ -2,13 +2,30 @@ package com.example.servify.customer;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.example.servify.ProductAdapter;
 import com.example.servify.R;
+import com.example.servify.admin.Product;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +33,12 @@ import com.example.servify.R;
  * create an instance of this fragment.
  */
 public class SecondFragment extends Fragment {
+
+    ImageView product_pic;
+    private RecyclerView recyclerView;
+    private ProductAdapter productAdapter;
+    private List<Product> productList;
+    DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference("servify/products");
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,6 +84,47 @@ public class SecondFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_second, container, false);
+        View secondView = inflater.inflate(R.layout.fragment_second, container, false);
+
+        recyclerView = secondView.findViewById(R.id.recyclerView);
+
+        // Set up the layout manager for the RecyclerView
+        LinearLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // Initialize the productList
+        productList = new ArrayList<>();
+
+        // Set up the adapter with the productList
+        productAdapter = new ProductAdapter(productList);
+        recyclerView.setAdapter(productAdapter);
+
+
+        product_pic = recyclerView.findViewById(R.id.profile_pic);
+
+        // Retrieve data from Firebase
+        productsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                productList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    int productId = snapshot.child("productId").getValue(Integer.class);
+                    String productName = snapshot.child("productName").getValue(String.class);
+                    String productPic = snapshot.child("productPic").getValue(String.class);
+                    double productPrice = snapshot.child("productPrice").getValue(Double.class);
+
+                    Product productDisplay = new Product(productId, productName, productPrice, productPic);
+                    productList.add(productDisplay);
+                }
+                productAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle the error case if retrieval is canceled
+            }
+        });
+
+        return secondView;
     }
 }

@@ -5,16 +5,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/greenOffWhite"
     tools:context=".customer.SecondFragment">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="PRODUCT"
-        android:textSize="48sp"
+        android:id="@+id/allProducts"
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:background="@color/starbuck"
+        android:fontFamily="@font/poppins_semibold"
+        android:paddingStart="15sp"
+        android:paddingTop="15sp"
+        android:shadowColor="@color/black"
+        android:shadowDx="10"
+        android:shadowDy="6"
+        android:shadowRadius="10"
+        android:text="All Products"
+        android:textColor="@color/white"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="560dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="100dp"
+        android:foregroundGravity="center"
+        android:orientation="vertical"
+        android:padding="8dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/allProducts"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
