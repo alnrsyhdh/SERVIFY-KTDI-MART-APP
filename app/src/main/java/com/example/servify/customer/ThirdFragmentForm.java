@@ -75,15 +75,17 @@ public class ThirdFragmentForm extends Fragment {
                                     editTextWish.setText("");
                                     imageView.setImageResource(R.drawable.basket);
 
-                                    sendUserToNextFragment(); //go back to previous page
+                                    Toast.makeText(getActivity(), "Your wish is successfully sent!", Toast.LENGTH_SHORT).show();
 
-                                    imageRef.delete().addOnCompleteListener(deleteTask -> {
-                                        if (deleteTask.isSuccessful()) {
-                                            // Image successfully deleted
-                                        } else {
-                                            // Failed to delete the image
-                                        }
-                                    });
+                                    //sendUserToNextFragment(); //go back to previous page
+
+//                                    imageRef.delete().addOnCompleteListener(deleteTask -> {
+//                                        if (deleteTask.isSuccessful()) {
+//                                            // Image successfully deleted
+//                                        } else {
+//                                            // Failed to delete the image
+//                                        }
+//                                    });
 
 
                                     // Data saved successfully
@@ -104,6 +106,8 @@ public class ThirdFragmentForm extends Fragment {
                             editTextProduct.setText("");
                             editTextWish.setText("");
                             imageView.setImageResource(R.drawable.basket);
+                            Toast.makeText(getActivity(), "Your wish is successfully sent!", Toast.LENGTH_SHORT).show();
+
                             // Data saved successfully
                         } else {
                             // Data saving failed

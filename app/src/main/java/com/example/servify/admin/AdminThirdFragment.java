@@ -4,17 +4,37 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
+import com.example.servify.customer.Wish;
+import com.example.servify.customer.WishAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link AdminThirdFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class AdminThirdFragment extends Fragment {
+
+    private RecyclerView recyclerView;
+    private WishAdapter wishAdapter;
+    private List<Wish> wishList;
+    private DatabaseReference wishRef;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,6 +80,49 @@ public class AdminThirdFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.admin_fragment_third, container, false);
+        View thirdFrag = inflater.inflate(R.layout.admin_fragment_third, container, false);
+
+        recyclerView = thirdFrag.findViewById(R.id.adminrecyclerViewWish);
+
+
+        // Initialize the wishList
+        wishList = new ArrayList<>();
+
+        // Set up the adapter with the wishList
+        wishAdapter = new WishAdapter(wishList);
+        recyclerView.setAdapter(wishAdapter);
+
+        // Set up the layout manager for the RecyclerView
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // Set up the Firebase database reference
+        wishRef = FirebaseDatabase.getInstance().getReference("servify/wishForm");
+
+
+        wishRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                wishList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    int wishId = snapshot.child("id").getValue(Integer.class);
+                    String wishPic = snapshot.child("imageUrl").getValue(String.class);
+                    String wishName = snapshot.child("uName").getValue(String.class);
+                    String wishDetails = snapshot.child("pName").getValue(String.class);
+
+                    Wish wish = new Wish(wishId, wishName, wishDetails, wishPic);
+                    wishList.add(wish);
+                }
+                wishAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle the error case if retrieval is canceled
+            }
+        });
+
+
+        return thirdFrag;
     }
 }
