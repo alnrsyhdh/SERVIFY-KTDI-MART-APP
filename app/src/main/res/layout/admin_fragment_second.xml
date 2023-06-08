@@ -5,21 +5,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/greenOffWhite"
     tools:context=".admin.AdminSecondFragment">
 
+
     <TextView
-        android:id="@+id/allProducts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:background="@color/starbuck"
+        android:fontFamily="@font/poppins_semibold"
+        android:paddingStart="15sp"
+        android:paddingTop="15sp"
+        android:shadowColor="@color/black"
+        android:shadowDx="10"
+        android:shadowDy="6"
+        android:shadowRadius="10"
         android:text="All Products"
-        android:textColor="@color/black"
-        android:textSize="35dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/white"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.072"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.062" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/addBtn"
@@ -29,9 +38,9 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.705"
+        app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.061" />
+        app:layout_constraintVertical_bias="0.023" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
