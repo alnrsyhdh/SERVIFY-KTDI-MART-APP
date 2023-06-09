@@ -4,18 +4,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
 import com.example.servify.admin.AdminWish;
 import com.example.servify.admin.AdminWishAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,24 +24,17 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AdminThirdFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class AdminThirdFragment extends Fragment {
+
+public class AdminThirdFragment extends Fragment implements AdminWishAdapter.OnDeleteClickListener {
 
     private RecyclerView recyclerView;
     private AdminWishAdapter wishAdapter;
     private List<AdminWish> wishList;
     private DatabaseReference wishRef;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -49,15 +42,6 @@ public class AdminThirdFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ThirdFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static AdminThirdFragment newInstance(String param1, String param2) {
         AdminThirdFragment fragment = new AdminThirdFragment();
         Bundle args = new Bundle();
@@ -79,26 +63,19 @@ public class AdminThirdFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View thirdFrag = inflater.inflate(R.layout.admin_fragment_third, container, false);
 
         recyclerView = thirdFrag.findViewById(R.id.adminrecyclerViewWish);
 
-
-        // Initialize the wishList
         wishList = new ArrayList<>();
-
-        // Set up the adapter with the wishList
         wishAdapter = new AdminWishAdapter(wishList);
         recyclerView.setAdapter(wishAdapter);
-
-        // Set up the layout manager for the RecyclerView
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(layoutManager);
 
-        // Set up the Firebase database reference
         wishRef = FirebaseDatabase.getInstance().getReference("servify/wishForm");
 
+        wishAdapter.setOnDeleteClickListener(this);
 
         wishRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -122,7 +99,29 @@ public class AdminThirdFragment extends Fragment {
             }
         });
 
-
         return thirdFrag;
+    }
+
+    @Override
+    public void onDeleteClick(int position) {
+        AdminWish wish = wishList.get(position);
+        int wishId = wish.getWishId();
+        wishList.remove(position);
+        wishAdapter.notifyItemRemoved(position);
+        removeWishFromFirebase(wishId);
+    }
+
+    private void removeWishFromFirebase(int wishId) {
+        DatabaseReference wishToDeleteRef = wishRef.child(String.valueOf(wishId));
+        wishToDeleteRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getActivity(), "Wish deleted successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "Failed to delete wish", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

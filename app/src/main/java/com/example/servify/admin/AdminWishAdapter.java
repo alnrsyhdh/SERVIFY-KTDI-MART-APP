@@ -19,9 +19,18 @@ public class AdminWishAdapter extends RecyclerView.Adapter<AdminWishAdapter.Admi
 
     private List<AdminWish> wishList;
     private Context context;
+    private OnDeleteClickListener deleteClickListener;
+
+    public interface OnDeleteClickListener {
+        void onDeleteClick(int position);
+    }
 
     public AdminWishAdapter(List<AdminWish> wishList) {
         this.wishList = wishList;
+    }
+
+    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
+        this.deleteClickListener = listener;
     }
 
     @NonNull
@@ -42,6 +51,15 @@ public class AdminWishAdapter extends RecyclerView.Adapter<AdminWishAdapter.Admi
                 .placeholder(R.drawable.default_pic) // Placeholder image resource
                 .error(R.drawable.default_pic) // Error image resource
                 .into(holder.wishPic);
+
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (deleteClickListener != null) {
+                    deleteClickListener.onDeleteClick(position);
+                }
+            }
+        });
     }
 
     @Override
@@ -52,13 +70,14 @@ public class AdminWishAdapter extends RecyclerView.Adapter<AdminWishAdapter.Admi
     public class AdminWishViewHolder extends RecyclerView.ViewHolder {
         ImageView wishPic;
         TextView wishNameTextView, wishDetailsTextView;
+        ImageView deleteButton;
 
         public AdminWishViewHolder(@NonNull View itemView) {
             super(itemView);
             wishPic = itemView.findViewById(R.id.admin_wish_pic);
             wishNameTextView = itemView.findViewById(R.id.admin_wish_product);
             wishDetailsTextView = itemView.findViewById(R.id.admin_wish_details);
+            deleteButton = itemView.findViewById(R.id.del_btn);
         }
     }
 }
-
