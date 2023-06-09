@@ -21,10 +21,10 @@
 
             <ImageView
                 android:id="@+id/del_btn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_gravity="right"
-                android:src="@drawable/delete" />
+                android:src="@drawable/remove" />
 
             <ImageView
                 android:id="@+id/admin_wish_pic"

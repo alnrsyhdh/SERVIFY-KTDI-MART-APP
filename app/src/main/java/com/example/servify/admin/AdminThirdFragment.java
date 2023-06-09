@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -12,8 +13,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
-import com.example.servify.admin.AdminWish;
-import com.example.servify.admin.AdminWishAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -99,7 +98,31 @@ public class AdminThirdFragment extends Fragment implements AdminWishAdapter.OnD
             }
         });
 
+        ImageView delAllButton = thirdFrag.findViewById(R.id.delAllButton);
+        delAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteAllWishes();
+            }
+        });
+
         return thirdFrag;
+    }
+
+    private void deleteAllWishes() {
+        DatabaseReference wishRef = FirebaseDatabase.getInstance().getReference("servify/wishForm");
+        wishRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    wishList.clear();
+                    wishAdapter.notifyDataSetChanged();
+                    Toast.makeText(getActivity(), "All wishes deleted successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "Failed to delete wishes", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -117,7 +140,7 @@ public class AdminThirdFragment extends Fragment implements AdminWishAdapter.OnD
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(getActivity(), "Wish deleted successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Wish were removed!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), "Failed to delete wish", Toast.LENGTH_SHORT).show();
                 }
