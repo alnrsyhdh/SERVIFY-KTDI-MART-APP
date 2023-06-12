@@ -2,7 +2,6 @@ package com.example.servify.admin;
 
 import static android.app.Activity.RESULT_OK;
 
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,41 +21,44 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdminSecondFragment extends Fragment{
 
-    Button addBtn;
-    private ImageView productPic;
-
+    Button addBtn, uploadPic;
+    private ImageView addProductPic;
+    private List<Product> productList;
+    private RecyclerView recyclerView;
+    private AdminProductAdapter productAdapter;
     private Uri imgPath;
     private static final int PICK_IMAGE_REQUEST =1;
     private StorageReference storageReference;
 
     private FirebaseAuth mAuth;
     DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference("servify/");
+    DatabaseReference displayRef = FirebaseDatabase.getInstance().getReference("servify/products");
+    private StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("productPic");
 
     public AdminSecondFragment() {
         // Required empty public constructor
-    }
-
-    public static AdminSecondFragment newInstance(String param1, String param2) {
-        AdminSecondFragment fragment = new AdminSecondFragment();
-        Bundle args = new Bundle();
-        return fragment;
     }
 
     @Override
@@ -77,8 +79,8 @@ public class AdminSecondFragment extends Fragment{
 
         //create function
         addBtn = secView.findViewById(R.id.addBtn);
-        productPic = dialogView.findViewById(R.id.productPic);
-        productPic.setClickable(true);
+
+        //productPic.setClickable(true);
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,44 +88,41 @@ public class AdminSecondFragment extends Fragment{
             }
         });
 
-        productPic.setOnClickListener(new View.OnClickListener() {
+
+
+        recyclerView = secView.findViewById(R.id.admin_recyclerView);
+        // Set up the layout manager for the RecyclerView
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        // Initialize the productList
+        productList = new ArrayList<>();
+        // Set up the adapter with the productList
+        productAdapter = new AdminProductAdapter(productList);
+        recyclerView.setAdapter(productAdapter);
+        // Retrieve data from Firebase
+        displayRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("productPic/*");
-                getImageInImageView();
-                uploadImage();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                productList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    int productId = snapshot.child("productId").getValue(Integer.class);
+                    String productName = snapshot.child("productName").getValue(String.class);
+                    String productPic = snapshot.child("productPic").getValue(String.class);
+                    double productPrice = snapshot.child("productPrice").getValue(Double.class);
+
+                    Product productDisplay = new Product(productId, productName, productPrice, productPic);
+                    productList.add(productDisplay);
+                }
+                productAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle the error case if retrieval is canceled
             }
         });
 
         return secView;
-    }
-
-
-    private void uploadImage() {
-        ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setTitle("Uploading Images...");
-        progressDialog.show();
-
-        FirebaseStorage.getInstance().getReference("productPic/" + UUID.randomUUID().toString()).putFile(imgPath).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                String profilePictureUrl = task.getResult().toString();}
-                        }
-                    });
-                    Toast.makeText(getContext(), "Image Uploaded!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "Upload Failed. Please try again...", Toast.LENGTH_SHORT).show();
-                }
-                progressDialog.dismiss();
-                reloadFragment();
-            }
-        });
     }
 
     private void reloadFragment() {
@@ -131,6 +130,15 @@ public class AdminSecondFragment extends Fragment{
         ft.detach(this).attach(this).commit();
     }
 
+    //upload picture in a dialog
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            imgPath = data.getData();
+            getImageInImageView();
+        }
+    }
     private void getImageInImageView() {
         Bitmap bitmap = null;
         try {
@@ -139,13 +147,15 @@ public class AdminSecondFragment extends Fragment{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        productPic.setImageBitmap(bitmap);
+        addProductPic.setImageBitmap(bitmap);
     }
 
     public void showDialog(){
 
         //inflate the custom layout xml
         View dialogView = getLayoutInflater().inflate(R.layout.admin_addproduct_dialog, null);
+        addProductPic = dialogView.findViewById(R.id.addProductPic);
+        uploadPic = dialogView.findViewById(R.id.uploadPic);
 
         AlertDialog.Builder builder = new AlertDialog.Builder (getActivity());
         builder.setView(dialogView);
@@ -153,8 +163,6 @@ public class AdminSecondFragment extends Fragment{
                 builder.setPositiveButton("Add Product", new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
-                        //int productId;
                         // Generate a unique identifier for the productId
                         long timestamp = System.currentTimeMillis();
                         int productId = (int) timestamp; // Convert the timestamp to an integer if necessary
@@ -165,17 +173,49 @@ public class AdminSecondFragment extends Fragment{
                         String name = productName.getText().toString();
                         String price = productPrice.getText().toString();
 
-                        Product product = new Product(productId, name, Double.parseDouble(price), "");
 
-                        productsRef.child("products").child(String.valueOf(productId)).setValue(product);
 
-                        // Display a toast message for successful input
-                        Toast.makeText(getActivity(), "Input added successfully.", Toast.LENGTH_SHORT).show();
+                        if (imgPath != null) {
+                            StorageReference imageRef = storageRef.child(String.valueOf(productId));
+                            UploadTask uploadTask = imageRef.putFile(imgPath);
 
+                            Picasso.get()
+                                    .load(String.valueOf(imageRef))
+                                    .into(addProductPic);
+
+                            uploadTask.continueWithTask(task -> {
+                                if (!task.isSuccessful()) {
+                                    throw task.getException();
+                                }
+                                // Continue with the task to get the download URL
+                                return imageRef.getDownloadUrl();
+                            }).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Uri downloadUri = task.getResult();
+                                    String imageUrl = downloadUri.toString();
+
+                                    Product product = new Product(productId, name, Double.parseDouble(price), imageUrl);
+                                    productsRef.child("products").child(String.valueOf(productId)).setValue(product)
+                                            .addOnCompleteListener(formTask -> {
+                                                if (formTask.isSuccessful()) {
+                                                    Toast.makeText(getActivity(), "Your product is successfully added!", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            });
+
+                        }else {
+                            Product product = new Product(productId, name, Double.parseDouble(price), "");
+                            productsRef.child("products").child(String.valueOf(productId)).setValue(product)
+                                    .addOnCompleteListener(task -> {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(getActivity(), "Your product is successfully added!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
                     }
-
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
@@ -184,5 +224,15 @@ public class AdminSecondFragment extends Fragment{
         AlertDialog dialog = builder.create();
         dialog.show();
 
+        uploadPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, PICK_IMAGE_REQUEST);
+            }
+        });
+
     }
+
 }

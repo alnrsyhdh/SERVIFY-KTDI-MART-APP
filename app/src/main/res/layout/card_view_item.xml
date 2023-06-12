@@ -21,7 +21,7 @@
                 android:orientation="vertical"
                 android:padding="3dp">
                 <ImageView
-                    android:id="@+id/productPic"
+                    android:id="@+id/addProductPic"
                     android:layout_width="160dp"
                     android:layout_height="100dp"
                     android:scaleType="centerInside"

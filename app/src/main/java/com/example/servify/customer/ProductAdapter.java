@@ -1,4 +1,4 @@
-package com.example.servify;
+package com.example.servify.customer;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.servify.R;
 import com.example.servify.admin.Product;
 import com.squareup.picasso.Picasso;
 
@@ -49,7 +50,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            productPic = itemView.findViewById(R.id.productPic);
+            productPic = itemView.findViewById(R.id.addProductPic);
             textViewProductName = itemView.findViewById(R.id.productNameTextView);
             textViewProductPrice = itemView.findViewById(R.id.productPriceTextView);
         }

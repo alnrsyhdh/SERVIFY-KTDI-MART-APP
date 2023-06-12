@@ -1,0 +1,102 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <!-- Image holder -->
+    <ImageView
+        android:id="@+id/admin_productPic"
+        android:layout_width="130dp"
+        android:layout_height="120dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/default_pic" />
+
+    <!-- Text views -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/admin_productNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:paddingLeft="150dp"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RM "
+            android:textSize="18sp"
+            android:paddingLeft="130dp"
+            android:textStyle="bold"
+            android:paddingTop="15dp"/>
+
+        <TextView
+            android:id="@+id/admin_productPriceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+        <!--Delete atas, bawah edit-->
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+<!--        <Button-->
+<!--            android:id="@+id/deleteBtn"-->
+<!--            android:layout_width="40dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="350dp"-->
+<!--            android:text="-"-->
+<!--            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />-->
+<!--        <Button-->
+<!--            android:id="@+id/updateBtn"-->
+<!--            android:layout_width="40dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="350dp"-->
+<!--            android:text="+"-->
+<!--            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />-->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+        <ImageView
+            android:id="@+id/deleteBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="310dp"
+            android:src="@drawable/remove" />
+        <ImageView
+            android:id="@+id/updateBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="310dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/edit"
+            />
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>
