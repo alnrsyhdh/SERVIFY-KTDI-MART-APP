@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/greenOffWhite">
 
     <TextView
@@ -23,76 +22,75 @@
 
     <TextView
         android:id="@+id/productNameTextView"
-        android:layout_width="329dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
+        android:layout_below="@id/textView2"
         android:layout_marginStart="42dp"
-        android:layout_marginTop="91dp"
-        android:layout_marginEnd="219dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/poppins_semibold"
         android:text="Name"
         android:textColor="@color/starbuck"
-        android:textSize="18dp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/productPriceTextView"
-        android:layout_width="329dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/update_productName"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="43dp"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="179dp"
+        android:layout_below="@id/productNameTextView"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="67dp"
         android:fontFamily="@font/poppins_semibold"
-        android:text="Price"
+        android:text="Price (RM)"
         android:textColor="@color/starbuck"
-        android:textSize="18dp" />
+        android:textSize="16sp" />
 
     <EditText
         android:id="@+id/update_productPrice"
-        android:layout_width="342dp"
-        android:layout_height="38dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/productPriceTextView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="31dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="45dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="42dp"
         android:background="@drawable/round_rec"
         android:fontFamily="@font/poppins_semibold"
-        android:gravity="center"
         android:hint="RM 0.00"
         android:inputType="numberDecimal"
+        android:padding="8dp"
         android:textColor="@color/starbuck"
         android:textColorHint="@color/starbuck"
         android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/update_productPrice"
+        android:layout_marginTop="25dp"
+        android:background="@color/starbuck"
+        android:fontFamily="@font/poppins_semibold"
+        android:paddingStart="15sp"
+        android:paddingTop="15sp"
+        android:shadowColor="@color/black"
+        android:shadowDx="10"
+        android:shadowDy="6"
+        android:shadowRadius="10"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
 
     <EditText
         android:id="@+id/update_productName"
-        android:layout_width="342dp"
-        android:layout_height="38dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/productNameTextView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="37dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="42dp"
         android:background="@drawable/round_rec"
         android:fontFamily="@font/poppins_semibold"
-        android:gravity="center"
         android:hint="Product Name"
-        android:inputType="text"
+        android:padding="8dp"
         android:textColor="@color/starbuck"
         android:textColorHint="@color/starbuck"
         android:textSize="16sp" />
 
-
 </RelativeLayout>
-
-
-
-
-

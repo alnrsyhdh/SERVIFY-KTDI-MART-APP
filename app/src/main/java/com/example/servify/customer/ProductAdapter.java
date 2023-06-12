@@ -14,14 +14,22 @@ import com.example.servify.R;
 import com.example.servify.admin.Product;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
 
     private List<Product> productList;
+    private List<Product> filteredList;
 
     public ProductAdapter(List<Product> productList) {
-        this.productList = productList;
+        this.productList = new ArrayList<>(productList);
+        this.filteredList = new ArrayList<>(productList);
+    }
+
+    public void setFilteredList(List<Product> filteredList) {
+        this.filteredList = new ArrayList<>(filteredList);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -33,17 +41,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Product product = productList.get(position);
+        Product product = filteredList.get(position); // Use filteredList instead of productList
         holder.bindData(product);
     }
 
     @Override
     public int getItemCount() {
-        return productList.size();
+        return filteredList.size(); // Use filteredList instead of productList
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView textViewProductId;
         private TextView textViewProductName;
         private TextView textViewProductPrice;
         private ImageView productPic;
