@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.example.servify.FormData;
 import com.example.servify.R;
+import com.example.servify.UserAction;
+import com.example.servify.UserActionListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -30,7 +32,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 
-public class ThirdFragmentForm extends Fragment {
+public class ThirdFragmentForm extends Fragment implements UserActionListener {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
@@ -42,6 +44,7 @@ public class ThirdFragmentForm extends Fragment {
 
     private DatabaseReference wishRef = FirebaseDatabase.getInstance().getReference().child("servify").child("wishForm");
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images");
+    DatabaseReference userActionsRef = FirebaseDatabase.getInstance().getReference("servify/userActions");
 
     public void saveFormData(View view) {
         long timestamp = System.currentTimeMillis();
@@ -50,6 +53,14 @@ public class ThirdFragmentForm extends Fragment {
         String uname = editTextName.getText().toString().trim();
         String pname = editTextProduct.getText().toString().trim();
         String wish = editTextWish.getText().toString().trim();
+
+        // Notify the listener
+        UserActionListener listener = (UserActionListener) getActivity();
+        if (listener != null) {
+            listener.onUserAction();
+        }
+
+        insertUserAction("User", "added new wishlist");
 
         if (imageUri != null) {
             StorageReference imageRef = storageRef.child(String.valueOf(id));
@@ -162,5 +173,27 @@ public class ThirdFragmentForm extends Fragment {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
         Toast.makeText(getActivity(), "Wishlist Added!", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onUserAction() {
+
+    }
+
+    // Method to insert the user action into the database
+    private void insertUserAction(String user, String action) {
+        long timestamp = System.currentTimeMillis();
+        String userActionId = String.valueOf(timestamp);
+
+        UserAction userAction = new UserAction(user, action);
+        userActionsRef.child(userActionId).setValue(userAction)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // User action inserted successfully
+                    } else {
+                        // Failed to insert the user action
+                    }
+                });
+
     }
 }

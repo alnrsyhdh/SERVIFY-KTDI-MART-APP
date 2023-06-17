@@ -70,8 +70,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 Picasso.get().load(product.getProductPic()).into(productPic);
             }
 
+            // Format the price with two decimal places
+            String formattedPrice = String.format("%.2f", product.getProductPrice());
+
             textViewProductName.setText(product.getProductName());
-            textViewProductPrice.setText(String.valueOf(product.getProductPrice()));
+            textViewProductPrice.setText(formattedPrice);
         }
     }
 }

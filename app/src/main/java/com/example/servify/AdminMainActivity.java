@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class AdminMainActivity extends AppCompatActivity
-        implements BottomNavigationView.OnNavigationItemSelectedListener {
+        implements BottomNavigationView.OnNavigationItemSelectedListener , UserActionListener {
 
     BottomNavigationView adminBottomNavigationView;
 
@@ -80,5 +80,10 @@ public class AdminMainActivity extends AppCompatActivity
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onUserAction() {
+
     }
 }

@@ -21,10 +21,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
+import com.example.servify.UserAction;
+import com.example.servify.UserActionListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -41,7 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminSecondFragment extends Fragment{
+public class AdminSecondFragment extends Fragment implements UserActionListener, AdminProductAdapter.UserActionListener {
 
     Button addBtn, uploadPic;
     private ImageView addProductPic;
@@ -49,12 +52,13 @@ public class AdminSecondFragment extends Fragment{
     private RecyclerView recyclerView;
     private AdminProductAdapter productAdapter;
     private Uri imgPath;
-    private static final int PICK_IMAGE_REQUEST =1;
+    private static final int PICK_IMAGE_REQUEST = 1;
     private StorageReference storageReference;
 
     private FirebaseAuth mAuth;
     DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference("servify/");
     DatabaseReference displayRef = FirebaseDatabase.getInstance().getReference("servify/products");
+    DatabaseReference userActionsRef = FirebaseDatabase.getInstance().getReference("servify/userActions");
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("productPic");
 
     public AdminSecondFragment() {
@@ -68,6 +72,11 @@ public class AdminSecondFragment extends Fragment{
         FirebaseApp.initializeApp(getActivity());
         //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         storageReference = FirebaseStorage.getInstance().getReference();
+    }
+
+    @Override
+    public void onUserAction() {
+
     }
 
     @Override
@@ -89,7 +98,6 @@ public class AdminSecondFragment extends Fragment{
         });
 
 
-
         recyclerView = secView.findViewById(R.id.admin_recyclerView);
         // Set up the layout manager for the RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -98,6 +106,7 @@ public class AdminSecondFragment extends Fragment{
         productList = new ArrayList<>();
         // Set up the adapter with the productList
         productAdapter = new AdminProductAdapter(productList);
+        productAdapter.setUserActionListener(this); // Set the listener to the fragment instance
         recyclerView.setAdapter(productAdapter);
         // Retrieve data from Firebase
         displayRef.addValueEventListener(new ValueEventListener() {
@@ -139,6 +148,7 @@ public class AdminSecondFragment extends Fragment{
             getImageInImageView();
         }
     }
+
     private void getImageInImageView() {
         Bitmap bitmap = null;
         try {
@@ -150,77 +160,86 @@ public class AdminSecondFragment extends Fragment{
         addProductPic.setImageBitmap(bitmap);
     }
 
-    public void showDialog(){
+    public void showDialog() {
 
         //inflate the custom layout xml
         View dialogView = getLayoutInflater().inflate(R.layout.admin_addproduct_dialog, null);
         addProductPic = dialogView.findViewById(R.id.addProductPic);
         uploadPic = dialogView.findViewById(R.id.uploadPic);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder (getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(dialogView);
 
-                builder.setPositiveButton("Add Product", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // Generate a unique identifier for the productId
-                        long timestamp = System.currentTimeMillis();
-                        int productId = (int) timestamp; // Convert the timestamp to an integer if necessary
+        builder.setPositiveButton("Add Product", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Generate a unique identifier for the productId
+                long timestamp = System.currentTimeMillis();
+                int productId = (int) timestamp; // Convert the timestamp to an integer if necessary
 
-                        EditText productName = dialogView.findViewById(R.id.productName);
-                        EditText productPrice = dialogView.findViewById(R.id.productPrice);
+                EditText productName = dialogView.findViewById(R.id.productName);
+                EditText productPrice = dialogView.findViewById(R.id.productPrice);
 
-                        String name = productName.getText().toString();
-                        String price = productPrice.getText().toString();
+                String name = productName.getText().toString();
+                String price = productPrice.getText().toString();
 
+                // Notify the listener (AdminSecondFragment) about the admin product added action
+                UserActionListener listener = (UserActionListener) getActivity();
+                if (listener != null) {
+                    listener.onUserAction();
+                }
 
+                insertUserAction("Admin", "added new product");
 
-                        if (imgPath != null) {
-                            StorageReference imageRef = storageRef.child(String.valueOf(productId));
-                            UploadTask uploadTask = imageRef.putFile(imgPath);
+                if (imgPath != null) {
+                    StorageReference imageRef = storageRef.child(String.valueOf(productId));
+                    UploadTask uploadTask = imageRef.putFile(imgPath);
 
-                            Picasso.get()
-                                    .load(String.valueOf(imageRef))
-                                    .into(addProductPic);
+                    Picasso.get()
+                            .load(String.valueOf(imageRef))
+                            .into(addProductPic);
 
-                            uploadTask.continueWithTask(task -> {
-                                if (!task.isSuccessful()) {
-                                    throw task.getException();
-                                }
-                                // Continue with the task to get the download URL
-                                return imageRef.getDownloadUrl();
-                            }).addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    Uri downloadUri = task.getResult();
-                                    String imageUrl = downloadUri.toString();
+                    uploadTask.continueWithTask(task -> {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+                        // Continue with the task to get the download URL
+                        return imageRef.getDownloadUrl();
+                    }).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Uri downloadUri = task.getResult();
+                            String imageUrl = downloadUri.toString();
 
-                                    Product product = new Product(productId, name, Double.parseDouble(price), imageUrl);
-                                    productsRef.child("products").child(String.valueOf(productId)).setValue(product)
-                                            .addOnCompleteListener(formTask -> {
-                                                if (formTask.isSuccessful()) {
-                                                    Toast.makeText(getActivity(), "Your product is successfully added!", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                }
-                            });
-
-                        }else {
-                            Product product = new Product(productId, name, Double.parseDouble(price), "");
+                            Product product = new Product(productId, name, Double.parseDouble(price), imageUrl);
                             productsRef.child("products").child(String.valueOf(productId)).setValue(product)
-                                    .addOnCompleteListener(task -> {
-                                        if (task.isSuccessful()) {
+                                    .addOnCompleteListener(formTask -> {
+                                        if (formTask.isSuccessful()) {
                                             Toast.makeText(getActivity(), "Your product is successfully added!", Toast.LENGTH_SHORT).show();
+
+                                            // Insert the user action into the database
+                                            insertUserAction("admin", "added new product");
                                         }
                                     });
                         }
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
+                    });
+
+                } else {
+                    Product product = new Product(productId, name, Double.parseDouble(price), "");
+                    productsRef.child("products").child(String.valueOf(productId)).setValue(product)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getActivity(), "Your product is successfully added!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
         AlertDialog dialog = builder.create();
         dialog.show();
 
@@ -235,4 +254,25 @@ public class AdminSecondFragment extends Fragment{
 
     }
 
+    // Method to insert the user action into the database
+    private void insertUserAction(String user, String action) {
+        long timestamp = System.currentTimeMillis();
+        String userActionId = String.valueOf(timestamp);
+
+        UserAction userAction = new UserAction(user, action);
+        userActionsRef.child(userActionId).setValue(userAction)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // User action inserted successfully
+                    } else {
+                        // Failed to insert the user action
+                    }
+                });
+    }
+
+    @NonNull
+    @Override
+    public CreationExtras getDefaultViewModelCreationExtras() {
+        return super.getDefaultViewModelCreationExtras();
+    }
 }

@@ -14,7 +14,7 @@ import com.example.servify.customer.ThirdFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity
-        implements BottomNavigationView.OnNavigationItemSelectedListener {
+        implements BottomNavigationView.OnNavigationItemSelectedListener , UserActionListener {
 
     BottomNavigationView bottomNavigationView;
 
@@ -76,5 +76,10 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onUserAction() {
+
     }
 }

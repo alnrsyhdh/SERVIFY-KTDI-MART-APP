@@ -17,6 +17,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
+import com.example.servify.UserAction;
+import com.example.servify.UserActionListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -31,7 +33,9 @@ import java.util.List;
 public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapter.ViewHolder> {
 
     private List<Product> productList;
+    private UserActionListener userActionListener;
     DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference("servify/products");
+    DatabaseReference userActionsRef = FirebaseDatabase.getInstance().getReference("servify/userActions");
     public AdminProductAdapter(List<Product> productList) {
         this.productList = productList;
     }
@@ -52,6 +56,14 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
     @Override
     public int getItemCount() {
         return productList.size();
+    }
+
+    public interface UserActionListener {
+        void onUserAction();
+    }
+
+    public void setUserActionListener(UserActionListener listener) {
+        this.userActionListener = listener;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -123,8 +135,11 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
                 Picasso.get().load(product.getProductPic()).into(productPic);
             }
 
+            // Format the price with two decimal places
+            String formattedPrice = String.format("%.2f", product.getProductPrice());
+
             textViewProductName.setText(product.getProductName());
-            textViewProductPrice.setText(String.valueOf(product.getProductPrice()));
+            textViewProductPrice.setText(formattedPrice);
         }
     }
 
@@ -162,6 +177,13 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
                                 productRef.child("productName").setValue(updatedName);
                                 productRef.child("productPrice").setValue(parsedPrice);
 
+                                // Notify the listener
+                                if (userActionListener != null) {
+                                    userActionListener.onUserAction();
+                                }
+
+                                insertUserAction("Admin", "updated product");
+
                                 Toast.makeText(itemView.getContext(), "Product updated successfully.", Toast.LENGTH_SHORT).show();
                             } catch (NumberFormatException e) {
                                 e.printStackTrace();
@@ -180,6 +202,23 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    // Method to insert the user action into the database
+    private void insertUserAction(String user, String action) {
+        long timestamp = System.currentTimeMillis();
+        String userActionId = String.valueOf(timestamp);
+
+        UserAction userAction = new UserAction(user, action);
+        userActionsRef.child(userActionId).setValue(userAction)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // User action inserted successfully
+                    } else {
+                        // Failed to insert the user action
+                    }
+                });
+
     }
 
 }
