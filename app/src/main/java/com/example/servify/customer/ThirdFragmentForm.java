@@ -6,11 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.servify.FormData;
 import com.example.servify.R;
@@ -60,7 +59,7 @@ public class ThirdFragmentForm extends Fragment implements UserActionListener {
             listener.onUserAction();
         }
 
-        insertUserAction("User", "added new wishlist");
+        insertUserAction("User", "added a new wish!");
 
         if (imageUri != null) {
             StorageReference imageRef = storageRef.child(String.valueOf(id));

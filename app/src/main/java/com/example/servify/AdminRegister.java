@@ -109,9 +109,6 @@ public class AdminRegister extends AppCompatActivity {
             });
         }
 
-
-
-
     }
 
     private void sendUserToNextActivity() {

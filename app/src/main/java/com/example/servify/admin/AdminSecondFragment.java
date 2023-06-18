@@ -189,7 +189,7 @@ public class AdminSecondFragment extends Fragment implements UserActionListener,
                     listener.onUserAction();
                 }
 
-                insertUserAction("Admin", "added new product");
+                insertUserAction("Admin", "added a new product!");
 
                 if (imgPath != null) {
                     StorageReference imageRef = storageRef.child(String.valueOf(productId));
@@ -217,7 +217,7 @@ public class AdminSecondFragment extends Fragment implements UserActionListener,
                                             Toast.makeText(getActivity(), "Your product is successfully added!", Toast.LENGTH_SHORT).show();
 
                                             // Insert the user action into the database
-                                            insertUserAction("admin", "added new product");
+                                            insertUserAction("Admin", "added a new product!");
                                         }
                                     });
                         }

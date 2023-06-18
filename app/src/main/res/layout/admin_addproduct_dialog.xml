@@ -18,7 +18,7 @@
         android:shadowRadius="10"
         android:text="Add Product Details"
         android:textColor="@color/white"
-        android:textSize="30sp" />
+        android:textSize="25sp" />
 
     <ImageView
         android:id="@+id/addProductPic"
@@ -94,7 +94,6 @@
         android:layout_below="@id/productNameTextView"
         android:layout_marginStart="29dp"
         android:layout_marginTop="63dp"
-        android:layout_marginEnd="200dp"
         android:fontFamily="@font/poppins_semibold"
         android:text="Price (RM)"
         android:textColor="@color/starbuck"

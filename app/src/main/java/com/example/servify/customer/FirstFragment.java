@@ -1,18 +1,19 @@
 package com.example.servify.customer;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import com.example.servify.R;
+import com.example.servify.UserAction;
+import com.example.servify.UserActionAdapter;
 import com.example.servify.admin.Product;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,15 +22,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 public class FirstFragment extends Fragment {
 
-    private RecyclerView recyclerView3, recyclerView4;
+    private RecyclerView recyclerView3, recyclerView4, recyclerView5;
     private ProductAdapter productAdapter;
     private List<Product> productList;
     private List<Wish> wishList;
+    private List<UserAction> userActionList;
+    private UserActionAdapter adapter;
+    private DatabaseReference actionRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,6 +77,20 @@ public class FirstFragment extends Fragment {
         // Retrieve data from Firebase and set up the initial RecyclerView (wish)
         loadProducts4();
 
+        //TODAY'S
+        recyclerView5 = first_view.findViewById(R.id.recyclerView5);
+
+        // Initialize UserAction list
+        userActionList = new ArrayList<>();
+
+        // Sets the layout manager - Arranges the items in a vertical list
+        recyclerView5.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new UserActionAdapter(userActionList); // Pass your data list here
+        recyclerView5.setAdapter(adapter);
+
+        // Retrieve data from Firebase & Set up the initial RecyclerView
+        loadAction();
+
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -103,6 +122,34 @@ public class FirstFragment extends Fragment {
         });
 
         return first_view;
+    }
+
+    private void loadAction() {
+            actionRef = FirebaseDatabase.getInstance().getReference("servify/userActions");
+            actionRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    userActionList.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String user = snapshot.child("user").getValue(String.class);
+                        String action = snapshot.child("action").getValue(String.class);
+
+                        UserAction actionDisplay = new UserAction(user, action);
+                        userActionList.add(actionDisplay);
+                    }
+
+                    // Reverse the order of the list
+                    Collections.reverse(userActionList);
+
+                    // Notify the adapter that the data has changed
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    // Handle database error
+                }
+            });
     }
 
     private void loadProducts3() {//products

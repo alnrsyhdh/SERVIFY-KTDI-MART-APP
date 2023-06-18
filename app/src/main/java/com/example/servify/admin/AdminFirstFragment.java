@@ -6,26 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
+import com.example.servify.UserAction;
+import com.example.servify.UserActionAdapter;
 import com.example.servify.customer.ProductAdapter;
 import com.example.servify.customer.Wish;
 import com.example.servify.customer.WishAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,14 +28,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AdminFirstFragment extends Fragment {
     private Spinner statusDropdown;
-    private RecyclerView recyclerView, recyclerView2;
+    private RecyclerView recyclerView, recyclerView2, recyclerView6;
     private ProductAdapter productAdapter;
     private List<Product> productList;
     private List<Wish> wishList;
+
+    private List<UserAction> userActionList;
+    private UserActionAdapter adapter;
+    private DatabaseReference actionRef;
 
     DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("servify/status/shop_status");
 
@@ -85,10 +85,50 @@ public class AdminFirstFragment extends Fragment {
 
         // Retrieve data from Firebase and set up the initial RecyclerView (wish)
         loadProducts2();
+        //TODAY'S
+        recyclerView6 = admin_firstfragment.findViewById(R.id.recyclerView6);
+
+        // Initialize UserAction list
+        userActionList = new ArrayList<>();
+
+        // Sets the layout manager - Arranges the items in a vertical list
+        recyclerView6.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new UserActionAdapter(userActionList); // Pass your data list here
+        recyclerView6.setAdapter(adapter);
+
+        // Retrieve data from Firebase & Set up the initial RecyclerView
+        loadAction();
 
         return admin_firstfragment;
     }
 
+    private void loadAction() {
+        actionRef = FirebaseDatabase.getInstance().getReference("servify/userActions");
+        actionRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userActionList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String user = snapshot.child("user").getValue(String.class);
+                    String action = snapshot.child("action").getValue(String.class);
+
+                    UserAction actionDisplay = new UserAction(user, action);
+                    userActionList.add(actionDisplay);
+                }
+
+                // Reverse the order of the list
+                Collections.reverse(userActionList);
+
+                // Notify the adapter that the data has changed
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle database error
+            }
+        });
+    }
     private void loadProducts2() {
         DatabaseReference wishRef = FirebaseDatabase.getInstance().getReference("servify/wishForm");
         wishRef.addValueEventListener(new ValueEventListener() {

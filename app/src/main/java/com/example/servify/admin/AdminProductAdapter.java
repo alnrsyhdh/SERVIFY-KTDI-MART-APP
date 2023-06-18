@@ -1,12 +1,10 @@
 package com.example.servify.admin;
 
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,14 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
 import com.example.servify.UserAction;
-import com.example.servify.UserActionListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -120,6 +114,12 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         Toast.makeText(itemView.getContext(), "Product deleted successfully.", Toast.LENGTH_SHORT).show();
+                        // Notify the listener
+                        if (userActionListener != null) {
+                            userActionListener.onUserAction();
+                        }
+
+                        insertUserAction("Admin", "deleted a product!");
                     } else {
                         Toast.makeText(itemView.getContext(), "Failed to delete product.", Toast.LENGTH_SHORT).show();
                     }
@@ -182,7 +182,7 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
                                     userActionListener.onUserAction();
                                 }
 
-                                insertUserAction("Admin", "updated product");
+                                insertUserAction("Admin", "updated a product!");
 
                                 Toast.makeText(itemView.getContext(), "Product updated successfully.", Toast.LENGTH_SHORT).show();
                             } catch (NumberFormatException e) {

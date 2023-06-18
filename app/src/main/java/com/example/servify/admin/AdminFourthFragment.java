@@ -4,62 +4,118 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.servify.R;
+import com.example.servify.UserAction;
+import com.example.servify.UserActionAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AdminFourthFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class AdminFourthFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RecyclerView recyclerView;
+    private UserActionAdapter adapter;
+    private List<UserAction> userActionList;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Button deleteActivity;
+    private DatabaseReference actionRef;
 
     public AdminFourthFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FourthFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AdminFourthFragment newInstance(String param1, String param2) {
-        AdminFourthFragment fragment = new AdminFourthFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public static AdminFourthFragment newInstance() {
+        return new AdminFourthFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.admin_fragment_fourth, container, false);
+        View view = inflater.inflate(R.layout.admin_fragment_fourth, container, false);
+
+        recyclerView = view.findViewById(R.id.recycler_view);
+        deleteActivity = view.findViewById(R.id.deleteActivity);
+
+        // Initialize UserAction list
+        userActionList = new ArrayList<>();
+
+        // Sets the layout manager - Arranges the items in a vertical list
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new UserActionAdapter(userActionList); // Pass your data list here
+        recyclerView.setAdapter(adapter);
+
+        // Retrieve data from Firebase & Set up the initial RecyclerView
+        loadAction();
+
+        deleteActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteAllActivity();
+            }
+        });
+
+        return view;
+    }
+
+    private void loadAction() {
+        actionRef = FirebaseDatabase.getInstance().getReference("servify/userActions");
+        actionRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userActionList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String user = snapshot.child("user").getValue(String.class);
+                    String action = snapshot.child("action").getValue(String.class);
+
+                    UserAction actionDisplay = new UserAction(user, action);
+                    userActionList.add(actionDisplay);
+                }
+
+                // Reverse the order of the list
+                Collections.reverse(userActionList);
+
+                // Notify the adapter that the data has changed
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle database error
+            }
+        });
+    }
+
+    private void deleteAllActivity() {
+        DatabaseReference actionRef = FirebaseDatabase.getInstance().getReference("servify/userActions");
+        actionRef.removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                if (error == null) {
+                    // Deletion successful
+                    userActionList.clear();
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(getActivity(), "All activity deleted successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle deletion error
+                }
+            }
+        });
     }
 }
